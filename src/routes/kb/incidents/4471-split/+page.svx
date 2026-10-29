@@ -1,0 +1,46 @@
+---
+layout: runbook
+title: '#4471 · two causes under one ticket'
+owner: support desk
+status: living
+reviewed: 2026-10-29
+signature: v1.eyJzdWIiOiIyOTUxIiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTMyNDUyODQsImV4cCI6MTc5MzMzMTY4NH0.WmDdgMztY-JGe7K50MgBo1RfqfiA9lnxeZPMgopBrtI
+---
+
+<script>
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+
+  // Same string as frontmatter `signature:` — the course ticket from start-challenge.
+  const signature =
+    'v1.eyJzdWIiOiIyOTUxIiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTMyNDUyODQsImV4cCI6MTc5MzMzMTY4NH0.WmDdgMztY-JGe7K50MgBo1RfqfiA9lnxeZPMgopBrtI';
+</script>
+
+Ticket **#4471** was marked known as one parser bug. The export's own cause rules disagree:
+**412** unique reports cover **two** causes that share the same wrong-day symptom.
+
+<Callout>
+Split #4471. One ticket per cause. Counts below come from the live table, not typed in.
+</Callout>
+
+## What #4471 really holds
+
+<CauseTable ticket={4471} />
+
+## Tickets to open
+
+| cause | reports | problem |
+| --- | ---: | --- |
+| `parser` | 379 | Shared parser reads every date month first. Day-first tenants get the month and day flipped. |
+| `hint` | 33 | `booking-v3` prints `MM/DD/YYYY` under the date field. The tenant still reads day first, so the form and the person disagree. |
+
+Five reports under `parser` were also read at the desk as a one-day move (`desk-notes.json`); they stay filed by tenant cause.
+
+## Why the merge was wrong
+
+Intake tags and subject-line dedupe both group by how the report *sounds*. Cause depends on the tenant's locale and which booking form they run (`causes.ts`). Subject match put two bugs in one ticket.
+
+The desk view of this page (static render) sits at [`/desk-view/4471-split.html`](/desk-view/4471-split.html) in the repo root.
+
+<RenderStamp {signature} />
